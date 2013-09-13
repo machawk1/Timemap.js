@@ -1,6 +1,6 @@
 Timemap.js
 ==========
 
-JavaScript class to parse an simplify access to Memento timemaps.
+JavaScript class to parse and simplify access to Memento timemaps.
 
-Logic derived from [https://github.com/galsondor/Timemap.py](galsondor/Timemap.py)
+Logic derived from [galsondor/Timemap.py](https://github.com/galsondor/Timemap.py).
