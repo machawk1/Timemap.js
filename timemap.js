@@ -1,67 +1,60 @@
-//==================================================================
-// KEYWORDS
-//==================================================================
+//#!/usr/bin/python -B
 
-//==================================================================
-// REGULAR EXPRESSIONS
-//==================================================================
+/*from datetime import datetime
+import dateutil.parser
+import re
+import urllib
+import urllib2*/
 
-var tokenizer = new RegExp('(<[^>]+>|[a-zA-Z]+="[^"]*"|[;,])\\s*');
+#==================================================================
+# KEYWORDS
+#==================================================================
 
-//==================================================================
-function TimeMap(obj){
-//==================================================================
+#==================================================================
+# REGULAR EXPRESSIONS
+#==================================================================
+
+tokenizer = re.compile('(<[^>]+>|[a-zA-Z]+="[^"]*"|[;,])\\s*')
+
+#==================================================================
+class TimeMap(object,timemap_uri):
+#==================================================================
+
+    //def __init__(self, timemap_uri):
 	this.original      = null;
 	this.timebundle    = null;
 	this.timegate      = null;
 	this.timemap       = null;
 	this.first_memento = null;
 	this.last_memento  = null;
-	this.mementos      = {};
-	this.tokens = TimeMapTokenizer(timemap_uri);
-	link = this.get_next_link();
-	while(link != null){
+	this.mementos      = [];
+	this.__tokens = TimeMapTokenizer(timemap_uri)
+	link = this.get_next_link()
+	while(link){
 		if(link[0] == 'memento')
 			this.mementos[link[1]] = link[2];
 		else if(link[0] == 'original')
-			if(link != null)
-				this.original = link[2];
-			//else null;
+			this.original = link ? link[2] : else null;
 		else if(link[0] == 'timebundle')
-			if(link != null)
-				this.timebundle = link[2];
-			//else null;
+			this.timebundle = link ? link[2] : else null;
 		else if(link[0] == 'timegate')
-			if(link != null)
-				this.timegate = link[2];
-			//else null;
+			this.timegate = link ? link[2] : else null;
 		else if(link[0] == 'timemap')
-			if(link != null)
-				this.timemap = link[2]; 
-			 //else null;
-		else if(link[0] == 'first memento'){
+			this.timemap = link ? link[2] : else null;
+		else if(link[0] == 'first memento')
+			this.mementos[link[1]] = link[2]
+			this.first_memento = link ? link[1] : else null;
+		else if(link[0] == 'last memento')){
 			this.mementos[link[1]] = link[2];
-			if(link != null)
-				this.first_memento = link[1];
-			//else 
-				//null;
-		}
-		else if(link[0] == 'last memento'){
-			this.mementos[link[1]] = link[2];
-			if(link != null){
-				this.last_memento = link[1]
-			}
-			//else null;
-		}
+			this.last_memento = link ? link[1] : else null;}
 		link = this.get_next_link()
 	}
-	
-	function get_next_link(){
+    function get_next_link(){
         uri = null;
         datetime = null;
         rel = null;
         resource_type = null;
-       /* for(token in this.tokens){
+        for(token in this.__tokens){
             if(token[0] == '<')
                 uri = token[1:-1];
             else if(token[:9] == 'datetime=')
@@ -70,64 +63,60 @@ function TimeMap(obj){
                 rel = token[5:-1];
             else if(token[:5] == 'type=')
                 resource_type = token[6:-1];
-            else if(vtoken == ';')
+            else if(token == ';')
                 null;
             else if(token == ',')
-                return ( rel, dateutil.parser.parse(datetime)
-                              if datetime != null else null,
-                              uri, resource_type );
-            else
-                raise Exception('Unexpected timemap token', token);
-        }*/
-        if(uri == null)
+                return ( rel, (datetime ? 
+                              dateutil.parser.parse(datetime) : null),
+                              uri, resource_type )
+            else:
+                raise Exception('Unexpected timemap token', token) }
+        if(!uri)
             return null
         else
-        	if(datetime != null)
-				return (rel, dateutil.parser.parse(datetime));
-            else 
-            	return (null, uri, resource_type);
+            return ( rel, (datetime ? 
+                      dateutil.parser.parse(datetime) : null),
+                      uri, resource_type )
 	}
-	
-    function getitem(key){
-        return this.mementos[key];
-    }
+    function __getitem__(key){
+        return this.mementos[key];}
 
-//==================================================================
-function TimeMapTokenizer(obj){
-//==================================================================
-	this.tmfile = urllib2.urlopen(timemap_uri);
-	this.tokens = [];
+#==================================================================
+function TimeMapTokenizer(object):
+#==================================================================
 
-    function iter(){
-        return this;
-    }
+    //def __init__(self, timemap_uri):
+    this._tmfile = urllib2.urlopen(timemap_uri);
+    this._tokens = [];
+
+    function __iter__(){
+        return this;}
 
     function next(){
-        if (this.tokens.length == 0){
-            line = this.tmfile.readline();
-            if(len(line) == 0){
-                //TODO: Raise StopIteration;
-            }
-            this.tokens = tokenizer.findall(line);
-        }
-        return this.tokens.pop(0);
-    }
-}
+        if this._tokens.length == 0{
+            line = this._tmfile.readline();
+            if(line.length == 0)
+                raise StopIteration;
+            this._tokens = tokenizer.findall(line);} //end conditional
+        return this._tokens.pop(0);} //end next function
 
-//===============================================================================
-// MAIN FOR TESTING
-//===============================================================================
-logging.basicConfig();
+#===============================================================================
+# MAIN FOR TESTING
+#===============================================================================
 
-timemap_uri = "http://api.wayback.archive.org/memento/timemap/link/http://www.cs.odu.edu";
-tm = TimeMap(timemap_uri);
-console.log "Original:     "+ tm.original);
-console.log( "Time Bundle:  "+ tm.timebundle);
-console.log( "Time Gate:    "+ tm.timegate);
-console.log( "Time Map:     "+ tm.timemap);
-console.log( "First Memento:"+ tm.first_memento);
-console.log( "Last Memento: "+ tm.last_memento);
-console.log( "Mementos:");
-for memento in sorted(tm.mementos.keys()):
-	print memento, "=", tm.mementos[memento];
+//if __name__ == "__main__":
+    //import logging
+    //logging.basicConfig()
+
+    timemap_uri = "http://api.wayback.archive.org/memento/timemap/link/http://www.cs.odu.edu";
+    tm = TimeMap(timemap_uri);
+    console.log("Original:     "+tm.original);
+    console.log("Time Bundle:  ", tm.timebundle);
+    console.log("Time Gate:    ", tm.timegate);
+    console.log("Time Map:     ", tm.timemap);
+    console.log("First Memento:", tm.first_memento);
+    console.log("Last Memento: ", tm.last_memento);
+    console.log("Mementos:");
+    for(memento in sorted(tm.mementos.keys())){
+        console.log(memento, "=", tm.mementos[memento]);}
 
